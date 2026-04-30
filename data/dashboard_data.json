@@ -1,0 +1,61 @@
+{
+  "meta": {
+    "data_updated_at": "2026-04-30 14:31 HKT",
+    "refresh_cadence": "Browser polls every 60 seconds; source dataset updates when the RSS ingestion pipeline runs successfully",
+    "data_updated_at_iso": "2026-04-30T14:31:01.813282+08:00",
+    "data_status": "live_rss_ingestion",
+    "source_item_count": 244,
+    "source_latest_item_at": "2026-04-30 12:39 HKT"
+  },
+  "kpis": {
+    "mau": {
+      "value": "74.2M",
+      "mom": "+4.8% MoM",
+      "yoy": "+21.4% YoY | 3M avg: 72.9M"
+    },
+    "dau": {
+      "value": "18.6M",
+      "mom": "+3.2% MoM",
+      "yoy": "+16.8% YoY | 3M avg: 18.1M"
+    },
+    "dau_mau": {
+      "value": "25.1%",
+      "mom": "+0.7pp MoM"
+    }
+  },
+  "risk_signals": {
+    "active_count": 11,
+    "new_this_week": 2,
+    "closed_historical": 1,
+    "items": []
+  },
+  "consumer_complaints": {
+    "blinkit": [],
+    "instamart": [],
+    "zepto": []
+  },
+  "merchant_complaints": {
+    "blinkit": [],
+    "swiggy": [],
+    "zepto": []
+  },
+  "driver_complaints": {
+    "blinkit": [],
+    "swiggy": [],
+    "zepto": []
+  },
+  "india_narrative_events": [],
+  "benchmark": {
+    "last_updated": "2026-04-28",
+    "entities": [],
+    "kpi_comparison": [],
+    "gap_readout": []
+  },
+  "pipeline": {
+    "status": "initializing",
+    "updated_at": "2026-04-30 14:31 HKT",
+    "source_count": 0,
+    "sources": [],
+    "note": "Dashboard initializing - RSS feed will populate data on first request"
+  }
+}
