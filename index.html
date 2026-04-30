@@ -25,7 +25,7 @@
     </header>
 
     <main class="wrap">
-      <!-- KPI Grid -->
+      <!-- KPI Grid - 3 cards now (Risk Signals removed from here) -->
       <section class="grid kpi-grid">
         <article class="card kpi">
           <h3>MAU (Combined, est.)</h3>
@@ -44,12 +44,32 @@
           <p class="big" id="kpi-stickiness-value">--</p>
           <p class="delta up" id="kpi-stickiness-mom">--</p>
         </article>
-        <article class="card kpi">
-          <h3>Critical Risk Signals</h3>
-          <p class="big" id="risk-active-count">--</p>
-          <p class="delta down" id="risk-summary">--</p>
+      </section>
+
+      <!-- Critical Risk Signals - Standalone full-width section -->
+      <section class="card risk-signals-card">
+        <div class="head">
+          <h2>⚠️ Critical Risk Signals</h2>
+          <span class="tag daily">Live Updates</span>
+        </div>
+        <div class="risk-summary-row">
+          <div class="risk-badge active">
+            <span class="risk-count" id="risk-active-count">--</span>
+            <span class="risk-label">Active Signals</span>
+          </div>
+          <div class="risk-badge new">
+            <span class="risk-count" id="risk-new-count">--</span>
+            <span class="risk-label">New This Week</span>
+          </div>
+          <div class="risk-badge closed">
+            <span class="risk-count" id="risk-closed-count">--</span>
+            <span class="risk-label">Historical Closed</span>
+          </div>
+        </div>
+        <div class="risk-signals-list">
+          <h4>Signal Timeline</h4>
           <ul class="risk-log" id="risk-log"></ul>
-        </article>
+        </div>
       </section>
 
       <!-- User Base Section -->
