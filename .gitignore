@@ -1,0 +1,6 @@
+node_modules/
+.DS_Store
+.env
+*.log
+data/cached_metrics.json
+data/financial_cache.json
