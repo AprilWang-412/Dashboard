@@ -27,32 +27,55 @@ function renderList(targetId, items) {
 }
 
 function renderRiskSignals(risk) {
-  el("risk-active-count").textContent = String(risk.active_count);
-  el("risk-summary").textContent =
-    `${risk.new_this_week} new this week | ${risk.closed_historical} historical closed`;
+  // Update the standalone risk card
+  const activeCountEl = document.getElementById("risk-active-count");
+  const newCountEl = document.getElementById("risk-new-count");
+  const closedCountEl = document.getElementById("risk-closed-count");
+  
+  if (activeCountEl) activeCountEl.textContent = String(risk.active_count);
+  if (newCountEl) newCountEl.textContent = String(risk.new_this_week);
+  if (closedCountEl) closedCountEl.textContent = String(risk.closed_historical);
 
-  const log = el("risk-log");
+  const log = document.getElementById("risk-log");
+  if (!log) return;
+  
   log.innerHTML = "";
+  
+  if (!risk.items || risk.items.length === 0) {
+    const li = document.createElement("li");
+    li.textContent = "No active risk signals at this time.";
+    li.style.color = "#64748b";
+    li.style.fontStyle = "italic";
+    log.appendChild(li);
+    return;
+  }
+  
   risk.items.forEach((item) => {
     const li = document.createElement("li");
     if (item.status === "closed") li.classList.add("closed");
-    const statusSuffix = item.status === "closed" ? " (Closed)" : "";
-    const date = document.createElement("span");
-    date.textContent = item.date;
-    li.appendChild(date);
-    li.append(` ${item.message}${statusSuffix}`);
+    
+    const dateSpan = document.createElement("span");
+    dateSpan.className = "date";
+    dateSpan.textContent = item.date;
+    li.appendChild(dateSpan);
+    
+    const messageSpan = document.createElement("span");
+    messageSpan.className = "message";
+    messageSpan.textContent = item.message;
+    li.appendChild(messageSpan);
+    
     if (item.url) {
       const link = document.createElement("a");
       link.href = item.url;
       link.target = "_blank";
       link.rel = "noopener noreferrer";
-      link.textContent = " source";
+      link.textContent = "[source]";
       li.appendChild(link);
     }
+    
     log.appendChild(li);
   });
 }
-
 function renderIndiaEvents(events) {
   const log = el("india-event-log");
   log.innerHTML = "";
