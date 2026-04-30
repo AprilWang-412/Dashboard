@@ -279,7 +279,7 @@ function buildComplaintLists(existing, items, stakeholder, keys) {
   return output;
 }
 
-// ========== 动态数据生成函数 ==========
+// ========== dynamic data generating function ==========
 
 function calculatePlatformStickiness(items) {
   const platformMentions = { blinkit: 0, instamart: 0, zepto: 0 };
@@ -430,22 +430,22 @@ function calculateGrowthAndRiskScores(items) {
   const growthRatio = growthMentions / totalRelevant;
   const riskRatio = riskMentions / totalRelevant;
 
+  // Round to integers (no decimal places)
   return {
     growth: {
-      industry: Math.min(95, Math.max(40, 60 + growthRatio * 40)),
-      eternal: Math.min(95, Math.max(40, 65 + growthRatio * 35)),
-      swiggy: Math.min(95, Math.max(35, 58 + growthRatio * 42)),
-      zepto: Math.min(95, Math.max(35, 56 + growthRatio * 44))
+      industry: Math.round(Math.min(95, Math.max(40, 60 + growthRatio * 40))),
+      eternal: Math.round(Math.min(95, Math.max(40, 65 + growthRatio * 35))),
+      swiggy: Math.round(Math.min(95, Math.max(35, 58 + growthRatio * 42))),
+      zepto: Math.round(Math.min(95, Math.max(35, 56 + growthRatio * 44)))
     },
     risk: {
-      industry: Math.min(70, Math.max(20, 30 + riskRatio * 40)),
-      eternal: Math.min(65, Math.max(15, 25 + riskRatio * 40)),
-      swiggy: Math.min(75, Math.max(25, 35 + riskRatio * 40)),
-      zepto: Math.min(80, Math.max(30, 40 + riskRatio * 40))
+      industry: Math.round(Math.min(70, Math.max(20, 30 + riskRatio * 40))),
+      eternal: Math.round(Math.min(65, Math.max(15, 25 + riskRatio * 40))),
+      swiggy: Math.round(Math.min(75, Math.max(25, 35 + riskRatio * 40))),
+      zepto: Math.round(Math.max(30, Math.min(80, 40 + riskRatio * 40)))
     }
   };
 }
-
 function extractTopComplaintTopics(items) {
   const topicScores = {
     "Late delivery / ETA miss": 0,
