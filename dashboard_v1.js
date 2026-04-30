@@ -325,7 +325,7 @@ async function fetchAndRender() {
         setRuntimeStatus(url.includes("api") ? "live-api" : "live-json", true, data);
 
         if (refreshBtn) {
-          refreshBtn.textContent = "✓ 已刷新";
+          refreshBtn.textContent = "✓ Refreshed";
           setTimeout(() => {
             if (refreshBtn) refreshBtn.textContent = "Refresh now";
           }, 1500);
@@ -340,7 +340,7 @@ async function fetchAndRender() {
       renderData(window.DASHBOARD_INLINE_DATA);
       setRuntimeStatus("inline-fallback", false, window.DASHBOARD_INLINE_DATA);
       if (refreshBtn) {
-        refreshBtn.textContent = "⚠️ 离线模式";
+        refreshBtn.textContent = "⚠️ Offline mode";
         setTimeout(() => {
           if (refreshBtn) refreshBtn.textContent = "Refresh now";
         }, 2000);
@@ -349,7 +349,7 @@ async function fetchAndRender() {
   } catch (error) {
     console.error("Refresh failed:", error);
     if (refreshBtn) {
-      refreshBtn.textContent = "❌ 刷新失败";
+      refreshBtn.textContent = "❌ Refresh failed";
       setTimeout(() => {
         if (refreshBtn) refreshBtn.textContent = "Refresh now";
       }, 2000);
