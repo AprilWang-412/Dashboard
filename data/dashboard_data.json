@@ -24,10 +24,42 @@
     }
   },
   "risk_signals": {
-    "active_count": 11,
+    "active_count": 4,
     "new_this_week": 2,
-    "closed_historical": 1,
-    "items": []
+    "closed_historical": 2,
+    "items": [
+      {
+        "date": "2026-04-28",
+        "message": "Mumbai: ETA miss complaints rose after evening peak.",
+        "status": "active"
+      },
+      {
+        "date": "2026-04-25",
+        "message": "Delhi NCR: Refund delay mentions climbed week-over-week.",
+        "status": "active"
+      },
+      {
+        "date": "2026-04-22",
+        "message": "Bangalore: Driver incentive volatility mentions accelerated.",
+        "status": "active"
+      },
+      {
+        "date": "2026-04-18",
+        "message": "Cross-city: Promo mismatch incidents remained elevated.",
+        "status": "closed"
+      },
+      {
+        "date": "2026-04-15",
+        "message": "Regulatory: CCI monitoring platform pricing practices.",
+        "status": "active",
+        "url": "https://www.cci.gov.in"
+      },
+      {
+        "date": "2026-04-10",
+        "message": "Merchant: Commission pressure complaints increased 15% WoW.",
+        "status": "active"
+      }
+    ]
   },
   "consumer_complaints": {
     "blinkit": [],
