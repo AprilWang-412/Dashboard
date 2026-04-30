@@ -1,0 +1,29 @@
+{
+  "rss_sources": [
+    {
+      "id": "india_quick_commerce_core",
+      "label": "India quick commerce core",
+      "url": "https://news.google.com/rss/search?q=India%20quick%20commerce%20Blinkit%20OR%20Instamart%20OR%20Zepto&hl=en-IN&gl=IN&ceid=IN:en"
+    },
+    {
+      "id": "delivery_platform_consumer_complaints",
+      "label": "Consumer complaints and service quality",
+      "url": "https://news.google.com/rss/search?q=India%20Blinkit%20Swiggy%20Instamart%20Zepto%20complaints%20refund%20delivery%20delay&hl=en-IN&gl=IN&ceid=IN:en"
+    },
+    {
+      "id": "restaurant_merchant_platform_feedback",
+      "label": "Restaurant and merchant platform feedback",
+      "url": "https://news.google.com/rss/search?q=India%20restaurants%20Swiggy%20Zomato%20Blinkit%20Zepto%20commission%20payout%20platform&hl=en-IN&gl=IN&ceid=IN:en"
+    },
+    {
+      "id": "driver_gig_worker_feedback",
+      "label": "Driver and gig worker feedback",
+      "url": "https://news.google.com/rss/search?q=India%20delivery%20riders%20gig%20workers%20Swiggy%20Zomato%20Blinkit%20Zepto%20incentives%20strike&hl=en-IN&gl=IN&ceid=IN:en"
+    },
+    {
+      "id": "delivery_regulatory_events",
+      "label": "Regulatory and policy events",
+      "url": "https://news.google.com/rss/search?q=India%20food%20delivery%20quick%20commerce%20regulation%20gig%20worker%20policy%20competition&hl=en-IN&gl=IN&ceid=IN:en"
+    }
+  ]
+}
