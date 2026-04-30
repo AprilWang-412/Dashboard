@@ -313,6 +313,7 @@ function calculatePlatformStickiness(items) {
     const adjustment = (positiveRate - 0.5) * 30;
     let value = baseline[platform] + adjustment;
     value = Math.min(Math.max(value, 18), 35);
+    // Keep 1 decimal place for percentage values
     result[platform] = `${value.toFixed(1)}%`;
   }
 
@@ -346,6 +347,7 @@ function calculateMerchantSentiment(items) {
   for (const platform of ['blinkit', 'swiggy', 'zepto']) {
     let value = sentiment[platform] - penalty[platform] * 0.5;
     value = Math.min(Math.max(value, 30), 95);
+    // Round to integer
     result[platform] = Math.round(value);
   }
 
@@ -382,6 +384,7 @@ function calculateDriverMetrics(items) {
   for (const platform of ['blinkit', 'swiggy', 'zepto']) {
     let value = satisfaction[platform] - penalty[platform] * 1.5;
     value = Math.min(Math.max(value, 35), 90);
+    // Round to integer
     satResult[platform] = Math.round(value);
 
     if (penalty[platform] >= 5) volResult[platform] = "Critical";
@@ -390,7 +393,6 @@ function calculateDriverMetrics(items) {
 
   return { satisfaction: satResult, volatility: volResult };
 }
-
 function calculateGrowthAndRiskScores(items) {
   let growthMentions = 0;
   let riskMentions = 0;
@@ -595,12 +597,12 @@ function extractInventoryData(items) {
   promoMismatches = Math.min(10, promoMismatches + Math.floor(promoCount / 15));
 
   return {
+    // Keep 1 decimal for percentage
     fill_rate: `${fillRate.toFixed(1)}%`,
-    oos_alerts: oosAlerts,
-    promo_mismatches: promoMismatches
+    oos_alerts: Math.round(oosAlerts),
+    promo_mismatches: Math.round(promoMismatches)
   };
 }
-
 function calculateMAUTrendData(currentMAU, items) {
   const now = new Date();
   const months = [];
