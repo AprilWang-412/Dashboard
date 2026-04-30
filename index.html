@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>India Delivery Intelligence Dashboard</title>
+    <link rel="stylesheet" href="dashboard_v1.css" />
+  </head>
+  <body>
+    <header class="top">
+      <div>
+        <p class="kicker">Automated Updating Dashboard</p>
+        <h1>India Delivery Intelligence Dashboard</h1>
+        <p class="sub">
+          Scope: Blinkit, Swiggy Instamart, Zepto | Cities: Mumbai, Delhi NCR, Bangalore
+        </p>
+      </div>
+      <div class="meta">
+        <p><strong>Data updated at:</strong> <span id="meta-data-updated">--</span></p>
+        <p><strong>Page checked at:</strong> <span id="meta-page-checked">--</span></p>
+        <p><strong>Refresh cadence:</strong> <span id="meta-refresh-cadence">--</span></p>
+        <p><strong>Data mode:</strong> <span id="meta-runtime-status">--</span></p>
+        <button class="refresh-button" id="refresh-now" type="button">Refresh now</button>
+      </div>
+    </header>
+
+    <main class="wrap">
+      <!-- KPI Grid -->
+      <section class="grid kpi-grid">
+        <article class="card kpi">
+          <h3>MAU (Combined, est.)</h3>
+          <p class="big" id="kpi-mau-value">--</p>
+          <p class="delta up" id="kpi-mau-mom">--</p>
+          <p class="delta up" id="kpi-mau-yoy">--</p>
+        </article>
+        <article class="card kpi">
+          <h3>DAU (Combined, est.)</h3>
+          <p class="big" id="kpi-dau-value">--</p>
+          <p class="delta up" id="kpi-dau-mom">--</p>
+          <p class="delta up" id="kpi-dau-yoy">--</p>
+        </article>
+        <article class="card kpi">
+          <h3>DAU / MAU</h3>
+          <p class="big" id="kpi-stickiness-value">--</p>
+          <p class="delta up" id="kpi-stickiness-mom">--</p>
+        </article>
+        <article class="card kpi">
+          <h3>Critical Risk Signals</h3>
+          <p class="big" id="risk-active-count">--</p>
+          <p class="delta down" id="risk-summary">--</p>
+          <ul class="risk-log" id="risk-log"></ul>
+        </article>
+      </section>
+
+      <!-- User Base Section -->
+      <section class="card">
+        <div class="head">
+          <h2>1) User Base and Engagement</h2>
+          <span class="tag weekly">Weekly Update</span>
+        </div>
+        <p class="note">
+          Core metrics: MAU, DAU, DAU/MAU, orders per user, transaction depth by platform.
+        </p>
+        <div class="grid two">
+          <article class="mini">
+            <h4>MAU Trend (Last 6 Months)</h4>
+            <div class="chart bars" id="mau-trend-chart">
+              <div class="bar" style="--h: 48%"><span>Loading...</span></div>
+            </div>
+          </article>
+          <article class="mini">
+            <h4>DAU/MAU by Platform</h4>
+            <ul class="rows" id="platform-stickiness">
+              <li><span>Blinkit</span><strong>--</strong></li>
+              <li><span>Instamart</span><strong>--</strong></li>
+              <li><span>Zepto</span><strong>--</strong></li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <!-- Consumer Pulse Section -->
+      <section class="card">
+        <div class="head">
+          <h2>2) Consumer Pulse</h2>
+          <span class="tag daily">Daily Update</span>
+        </div>
+        <p class="note">
+          Sources: app reviews, social commentary. Output: sentiment trend, key complaint clusters,
+          growth/decline drivers by company.
+        </p>
+        <div class="grid three">
+          <article class="mini">
+            <h4>Review Volume (7D)</h4>
+            <ul class="rows" id="review-volume">
+              <li><span>Blinkit</span><strong>--</strong></li>
+              <li><span>Instamart</span><strong>--</strong></li>
+              <li><span>Zepto</span><strong>--</strong></li>
+            </ul>
+          </article>
+          <article class="mini">
+            <h4>Sentiment Mix</h4>
+            <div class="stack" id="sentiment-container">
+              <span class="pos" id="sentiment-positive">Positive --%</span>
+              <span class="neu" id="sentiment-neutral">Neutral --%</span>
+              <span class="neg" id="sentiment-negative">Negative --%</span>
+            </div>
+          </article>
+          <article class="mini">
+            <h4>Top Complaint Topics</h4>
+            <ol class="topics" id="top-complaint-topics">
+              <li>Loading...</li>
+            </ol>
+          </article>
+        </div>
+        <div class="grid three">
+          <article class="mini">
+            <h4>Blinkit Complaint Split</h4>
+            <ol class="topics" id="consumer-blinkit"></ol>
+          </article>
+          <article class="mini">
+            <h4>Instamart Complaint Split</h4>
+            <ol class="topics" id="consumer-instamart"></ol>
+          </article>
+          <article class="mini">
+            <h4>Zepto Complaint Split</h4>
+            <ol class="topics" id="consumer-zepto"></ol>
+          </article>
+        </div>
+      </section>
+
+      <!-- Merchant Pulse Section -->
+      <section class="card">
+        <div class="head">
+          <h2>3) Merchant Pulse</h2>
+          <span class="tag weekly">Weekly Update</span>
+        </div>
+        <p class="note">
+          Sources: public merchant feedback and interviews. Tracks commission pressure, traffic
+          quality, payout and support confidence.
+        </p>
+        <div class="grid two">
+          <article class="mini">
+            <h4>Merchant Sentiment Index</h4>
+            <ul class="rows" id="merchant-sentiment">
+              <li><span>Blinkit</span><strong>--</strong></li>
+              <li><span>Swiggy</span><strong>--</strong></li>
+              <li><span>Zepto</span><strong>--</strong></li>
+            </ul>
+          </article>
+          <article class="mini">
+            <h4>Pain Point Heat</h4>
+            <div class="heat" id="pain-point-heat">
+              <p><span>Loading...</span><strong>--</strong></p>
+            </div>
+          </article>
+        </div>
+        <div class="grid three">
+          <article class="mini">
+            <h4>Blinkit Merchant Complaints</h4>
+            <ol class="topics" id="merchant-blinkit"></ol>
+          </article>
+          <article class="mini">
+            <h4>Swiggy Merchant Complaints</h4>
+            <ol class="topics" id="merchant-swiggy"></ol>
+          </article>
+          <article class="mini">
+            <h4>Zepto Merchant Complaints</h4>
+            <ol class="topics" id="merchant-zepto"></ol>
+          </article>
+        </div>
+      </section>
+
+      <!-- Driver Pulse Section -->
+      <section class="card">
+        <div class="head">
+          <h2>4) Driver Pulse</h2>
+          <span class="tag weekly">Weekly Update</span>
+        </div>
+        <p class="note">
+          Sources: public driver reviews and discussion channels. Tracks earning stability,
+          incentive confidence, and work-condition pressure.
+        </p>
+        <div class="grid three">
+          <article class="mini">
+            <h4>Income Satisfaction</h4>
+            <ul class="rows" id="driver-satisfaction">
+              <li><span>Blinkit</span><strong>--</strong></li>
+              <li><span>Swiggy</span><strong>--</strong></li>
+              <li><span>Zepto</span><strong>--</strong></li>
+            </ul>
+          </article>
+          <article class="mini">
+            <h4>Incentive Volatility</h4>
+            <ul class="rows" id="driver-volatility">
+              <li><span>Blinkit</span><strong>--</strong></li>
+              <li><span>Swiggy</span><strong>--</strong></li>
+              <li><span>Zepto</span><strong>--</strong></li>
+            </ul>
+          </article>
+          <article class="mini">
+            <h4>Driver Risk Alerts (7D)</h4>
+            <ol class="topics" id="driver-risk-alerts">
+              <li>Loading...</li>
+            </ol>
+          </article>
+        </div>
+        <div class="grid three">
+          <article class="mini">
+            <h4>Blinkit Driver Complaints</h4>
+            <ol class="topics" id="driver-blinkit"></ol>
+          </article>
+          <article class="mini">
+            <h4>Swiggy Driver Complaints</h4>
+            <ol class="topics" id="driver-swiggy"></ol>
+          </article>
+          <article class="mini">
+            <h4>Zepto Driver Complaints</h4>
+            <ol class="topics" id="driver-zepto"></ol>
+          </article>
+        </div>
+      </section>
+
+      <!-- Pricing Section -->
+      <section class="card">
+        <div class="head">
+          <h2>5) Pricing, Assortment and Fulfilment</h2>
+          <span class="tag daily">Daily Update</span>
+        </div>
+        <p class="note">
+          Tracks SKU pricing, promo intensity, basket economics, ETA reliability, and in-stock
+          consistency across three core cities.
+        </p>
+        <div class="grid three">
+          <article class="mini">
+            <h4>Basket Price Index</h4>
+            <ul class="rows" id="pricing-index">
+              <li><span>Blinkit</span><strong>--</strong></li>
+              <li><span>Instamart</span><strong>--</strong></li>
+              <li><span>Zepto</span><strong>--</strong></li>
+            </ul>
+          </article>
+          <article class="mini">
+            <h4>Median ETA (mins)</h4>
+            <ul class="rows" id="eta-data">
+              <li><span>Mumbai</span><strong>--</strong></li>
+              <li><span>Delhi NCR</span><strong>--</strong></li>
+              <li><span>Bangalore</span><strong>--</strong></li>
+            </ul>
+          </article>
+          <article class="mini">
+            <h4>In-stock Reliability</h4>
+            <ul class="rows" id="inventory-data">
+              <li><span>Top 100 SKU fill rate</span><strong>--</strong></li>
+              <li><span>OOS spike alerts</span><strong>--</strong></li>
+              <li><span>Promo mismatch alerts</span><strong>--</strong></li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <!-- Thesis Validation Section -->
+      <section class="card">
+        <div class="head">
+          <h2>6) Thesis Validation and Early Warning</h2>
+          <span class="tag weekly">Weekly Model Refresh</span>
+        </div>
+        <p class="note">
+          Converts metrics + text signals into growth/decline factors for industry and company-level
+          judgement tracking.
+        </p>
+        <div class="grid two">
+          <article class="mini">
+            <h4>Growth Driver Score</h4>
+            <ul class="rows" id="growth-scores">
+              <li><span>Industry</span><strong>--</strong></li>
+              <li><span>Eternal</span><strong>--</strong></li>
+              <li><span>Swiggy</span><strong>--</strong></li>
+              <li><span>Zepto</span><strong>--</strong></li>
+            </ul>
+          </article>
+          <article class="mini">
+            <h4>Deterioration Risk Score</h4>
+            <ul class="rows" id="risk-scores">
+              <li><span>Industry</span><strong>--</strong></li>
+              <li><span>Eternal</span><strong>--</strong></li>
+              <li><span>Swiggy</span><strong>--</strong></li>
+              <li><span>Zepto</span><strong>--</strong></li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <!-- India Narrative Events -->
+      <section class="card">
+        <div class="head">
+          <h2>7) India Narrative Events Timeline</h2>
+          <span class="tag daily">Daily News Update</span>
+        </div>
+        <p class="note">
+          Tracks India-specific public narrative events related to delivery platforms.
+        </p>
+        <ul class="event-log" id="india-event-log"></ul>
+      </section>
+
+      <!-- Benchmark Section -->
+      <section class="card">
+        <div class="head">
+          <h2>8) Global Benchmark Comparables</h2>
+          <span class="tag weekly">Auto-Updated Daily</span>
+        </div>
+        <p class="note">
+          Compares India platforms against global reference peers. Stock prices update automatically.
+        </p>
+        <div class="grid three" id="benchmark-entity-cards"></div>
+        <article class="mini benchmark-table-wrap">
+          <h4>Cross-Platform KPI Comparison</h4>
+          <table class="benchmark-table" id="benchmark-table">
+            <thead>
+              <tr><th>Axis</th><th>India Top-3</th><th>DoorDash</th><th>Meituan / Keeta</th><th>Comparability</th></tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </article>
+        <article class="mini">
+          <h4>Gap Readout</h4>
+          <ol class="topics" id="benchmark-gap-readout"></ol>
+        </article>
+        <p class="note"><strong>Benchmark data updated:</strong> <span id="benchmark-last-updated">--</span></p>
+      </section>
+    </main>
+    <script src="data/dashboard_data.inline.js"></script>
+    <script src="dashboard_v1.js"></script>
+  </body>
+</html>
