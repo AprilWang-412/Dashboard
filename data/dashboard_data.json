@@ -23,6 +23,26 @@
       "mom": "+0.7pp MoM"
     }
   },
+  "user_metrics": {
+    "status": "provider_unconfigured",
+    "source": "similarweb_app_active_users",
+    "scope": "India national Android app panel",
+    "updated_at": "Not connected",
+    "note": "Set SIMILARWEB_API_KEY in Vercel to update MAU, DAU and DAU/MAU automatically; current KPI cards remain static estimates.",
+    "mau_trend": [
+      { "period": "2025-11", "value": 62000000, "label": "62.0M", "height": 72 },
+      { "period": "2025-12", "value": 65000000, "label": "65.0M", "height": 76 },
+      { "period": "2026-01", "value": 68000000, "label": "68.0M", "height": 80 },
+      { "period": "2026-02", "value": 70000000, "label": "70.0M", "height": 83 },
+      { "period": "2026-03", "value": 72900000, "label": "72.9M", "height": 86 },
+      { "period": "2026-04", "value": 74200000, "label": "74.2M", "height": 88 }
+    ],
+    "platforms": [
+      { "key": "blinkit", "name": "Blinkit", "mau": "--", "dau": "--", "stickiness": "27.4%" },
+      { "key": "swiggy", "name": "Swiggy", "mau": "--", "dau": "--", "stickiness": "24.9%" },
+      { "key": "zepto", "name": "Zepto", "mau": "--", "dau": "--", "stickiness": "23.1%" }
+    ]
+  },
   "risk_signals": {
     "active_count": 4,
     "new_this_week": 2,

@@ -1,6 +1,7 @@
 const fs = require("fs");
 const path = require("path");
 const { getBenchmarkData } = require("./benchmark-crawler.js");
+const { buildLiveUserMetrics } = require("../lib/user-metrics.js");
 
 const TIME_ZONE = "Asia/Hong_Kong";
 const FETCH_TIMEOUT_MS = 8000;
@@ -762,8 +763,6 @@ function applyLiveItems(data, items, failures, sourceCount) {
   data.pain_points = calculateDynamicPainPoints(items);
   data.eta_data = extractETAData(items);
   data.inventory_data = extractInventoryData(items);
-  data.mau_trend = calculateMAUTrendData(parseFloat(data.kpis.mau.value) || 74.2, items);
-
   const priceMentions = items.filter(i => i.topic === 'Promo / price mismatch').length;
   const basePricing = { blinkit: 100, instamart: 103, zepto: 98 };
   const priceAdjustment = (priceMentions - 10) * 0.2;
@@ -778,7 +777,7 @@ function applyLiveItems(data, items, failures, sourceCount) {
     updated_at: formatHkt(now),
     source_count: items.length,
     sources: ["Consumer complaints and service quality", "Driver and gig worker feedback", "India quick commerce core", "Regulatory and policy events", "Restaurant and merchant platform feedback"],
-    note: "MAU/DAU benchmark values remain disclosure-aligned estimates until a separate app-intelligence connector is added."
+    note: "RSS modules update live; user metrics update through Similarweb API when SIMILARWEB_API_KEY is configured."
   };
 
   return data;
@@ -815,6 +814,21 @@ module.exports = async function handler(req, res) {
     console.log("✅ Benchmark 数据已动态更新");
   } catch (benchmarkErr) {
     console.warn("Benchmark 动态获取失败，使用静态数据:", benchmarkErr.message);
+  }
+
+  try {
+    data = await buildLiveUserMetrics(data);
+    if (data.pipeline) {
+      data.pipeline.user_metrics_status = data.user_metrics?.status || "unknown";
+    }
+  } catch (userMetricErr) {
+    data.user_metrics = {
+      status: "provider_runtime_error",
+      source: "similarweb_app_active_users",
+      scope: "India national app panel",
+      updated_at: formatHkt(new Date()),
+      note: `User metric connector failed at runtime; static estimates retained. Error: ${userMetricErr.message}`
+    };
   }
 
   res.setHeader("Cache-Control", "no-store, max-age=0");

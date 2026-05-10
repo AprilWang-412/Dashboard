@@ -1,28 +1,161 @@
 window.DASHBOARD_INLINE_DATA = {
   "meta": {
     "data_updated_at": "2026-04-30 14:31 HKT",
-    "refresh_cadence": "Browser polls every 60 seconds; fallback data mode",
+    "refresh_cadence": "Browser polls every 60 seconds; source dataset updates when the RSS ingestion pipeline runs successfully",
     "data_updated_at_iso": "2026-04-30T14:31:01.813282+08:00",
-    "data_status": "inline_fallback"
+    "data_status": "live_rss_ingestion",
+    "source_item_count": 244,
+    "source_latest_item_at": "2026-04-30 12:39 HKT"
   },
   "kpis": {
-    "mau": { "value": "74.2M", "mom": "+4.8% MoM", "yoy": "+21.4% YoY" },
-    "dau": { "value": "18.6M", "mom": "+3.2% MoM", "yoy": "+16.8% YoY" },
-    "dau_mau": { "value": "25.1%", "mom": "+0.7pp MoM" }
+    "mau": {
+      "value": "74.2M",
+      "mom": "+4.8% MoM",
+      "yoy": "+21.4% YoY | 3M avg: 72.9M"
+    },
+    "dau": {
+      "value": "18.6M",
+      "mom": "+3.2% MoM",
+      "yoy": "+16.8% YoY | 3M avg: 18.1M"
+    },
+    "dau_mau": {
+      "value": "25.1%",
+      "mom": "+0.7pp MoM"
+    }
   },
-  "risk_signals": { "active_count": 0, "new_this_week": 0, "closed_historical": 0, "items": [] },
-  "consumer_complaints": { "blinkit": [], "instamart": [], "zepto": [] },
-  "merchant_complaints": { "blinkit": [], "swiggy": [], "zepto": [] },
-  "driver_complaints": { "blinkit": [], "swiggy": [], "zepto": [] },
+  "user_metrics": {
+    "status": "provider_unconfigured",
+    "source": "similarweb_app_active_users",
+    "scope": "India national Android app panel",
+    "updated_at": "Not connected",
+    "note": "Set SIMILARWEB_API_KEY in Vercel to update MAU, DAU and DAU/MAU automatically; current KPI cards remain static estimates.",
+    "mau_trend": [
+      {
+        "period": "2025-11",
+        "value": 62000000,
+        "label": "62.0M",
+        "height": 72
+      },
+      {
+        "period": "2025-12",
+        "value": 65000000,
+        "label": "65.0M",
+        "height": 76
+      },
+      {
+        "period": "2026-01",
+        "value": 68000000,
+        "label": "68.0M",
+        "height": 80
+      },
+      {
+        "period": "2026-02",
+        "value": 70000000,
+        "label": "70.0M",
+        "height": 83
+      },
+      {
+        "period": "2026-03",
+        "value": 72900000,
+        "label": "72.9M",
+        "height": 86
+      },
+      {
+        "period": "2026-04",
+        "value": 74200000,
+        "label": "74.2M",
+        "height": 88
+      }
+    ],
+    "platforms": [
+      {
+        "key": "blinkit",
+        "name": "Blinkit",
+        "mau": "--",
+        "dau": "--",
+        "stickiness": "27.4%"
+      },
+      {
+        "key": "swiggy",
+        "name": "Swiggy",
+        "mau": "--",
+        "dau": "--",
+        "stickiness": "24.9%"
+      },
+      {
+        "key": "zepto",
+        "name": "Zepto",
+        "mau": "--",
+        "dau": "--",
+        "stickiness": "23.1%"
+      }
+    ]
+  },
+  "risk_signals": {
+    "active_count": 4,
+    "new_this_week": 2,
+    "closed_historical": 2,
+    "items": [
+      {
+        "date": "2026-04-28",
+        "message": "Mumbai: ETA miss complaints rose after evening peak.",
+        "status": "active"
+      },
+      {
+        "date": "2026-04-25",
+        "message": "Delhi NCR: Refund delay mentions climbed week-over-week.",
+        "status": "active"
+      },
+      {
+        "date": "2026-04-22",
+        "message": "Bangalore: Driver incentive volatility mentions accelerated.",
+        "status": "active"
+      },
+      {
+        "date": "2026-04-18",
+        "message": "Cross-city: Promo mismatch incidents remained elevated.",
+        "status": "closed"
+      },
+      {
+        "date": "2026-04-15",
+        "message": "Regulatory: CCI monitoring platform pricing practices.",
+        "status": "active",
+        "url": "https://www.cci.gov.in"
+      },
+      {
+        "date": "2026-04-10",
+        "message": "Merchant: Commission pressure complaints increased 15% WoW.",
+        "status": "active"
+      }
+    ]
+  },
+  "consumer_complaints": {
+    "blinkit": [],
+    "instamart": [],
+    "zepto": []
+  },
+  "merchant_complaints": {
+    "blinkit": [],
+    "swiggy": [],
+    "zepto": []
+  },
+  "driver_complaints": {
+    "blinkit": [],
+    "swiggy": [],
+    "zepto": []
+  },
   "india_narrative_events": [],
   "benchmark": {
     "last_updated": "2026-04-28",
-    "entities": [
-      { "name": "India Top-3", "user_metric": "MAU", "user_value": "74.2M", "stickiness_metric": "DAU/MAU", "stickiness_value": "25.1%", "commentary": "High growth market" },
-      { "name": "DoorDash", "user_metric": "MAU", "user_value": "56M+", "stickiness_metric": "Order frequency", "stickiness_value": "All-time high", "commentary": "Mature market" },
-      { "name": "Meituan", "user_metric": "ATU", "user_value": "800M+", "stickiness_metric": "DAU growth", "stickiness_value": "20%+", "commentary": "Massive scale" }
-    ],
+    "entities": [],
     "kpi_comparison": [],
-    "gap_readout": ["India leads in growth speed", "Global peers lead in consistency"]
+    "gap_readout": []
+  },
+  "pipeline": {
+    "status": "initializing",
+    "updated_at": "2026-04-30 14:31 HKT",
+    "source_count": 0,
+    "sources": [],
+    "note": "Dashboard initializing - RSS feed will populate data on first request"
   }
 };

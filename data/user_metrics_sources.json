@@ -1,0 +1,39 @@
+{
+  "provider": "similarweb_app_active_users",
+  "country": "in",
+  "history_months": 13,
+  "daily_days": 14,
+  "primary_metric_scope": "India national Android app panel",
+  "endpoint_template": "https://api.similarweb.com/v5/apps/{store}/active-users",
+  "notes": [
+    "Set SIMILARWEB_API_KEY in Vercel to update MAU, DAU and DAU/MAU automatically.",
+    "Set SIMILARWEB_ACTIVE_USERS_URL_TEMPLATE if the account-specific endpoint path differs from the default template.",
+    "City panel is for fulfilment, SKU and ETA checks only; active-user metrics are national India panel metrics."
+  ],
+  "apps": [
+    {
+      "key": "blinkit",
+      "name": "Blinkit",
+      "company": "Eternal / Zomato",
+      "store": "google",
+      "app_id": "com.grofers.customerapp",
+      "store_url": "https://play.google.com/store/apps/details?id=com.grofers.customerapp"
+    },
+    {
+      "key": "swiggy",
+      "name": "Swiggy",
+      "company": "Swiggy / Instamart",
+      "store": "google",
+      "app_id": "in.swiggy.android",
+      "store_url": "https://play.google.com/store/apps/details?id=in.swiggy.android"
+    },
+    {
+      "key": "zepto",
+      "name": "Zepto",
+      "company": "Zepto",
+      "store": "google",
+      "app_id": "com.zeptoconsumerapp",
+      "store_url": "https://play.google.com/store/apps/details?id=com.zeptoconsumerapp"
+    }
+  ]
+}

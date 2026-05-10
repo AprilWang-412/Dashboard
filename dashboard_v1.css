@@ -117,7 +117,7 @@ h1 {
 }
 
 .kpi-grid {
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
 .two {
@@ -338,6 +338,16 @@ h4 {
   transform: translateX(-50%);
   font-size: 12px;
   color: var(--muted);
+}
+
+.bar strong {
+  position: absolute;
+  top: -22px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 11px;
+  color: var(--ink);
+  white-space: nowrap;
 }
 
 .stack {

@@ -132,6 +132,69 @@ function renderBenchmark(benchmark) {
   el("benchmark-last-updated").textContent = benchmark.last_updated;
 }
 
+function formatTrendPeriod(period) {
+  if (!period) return "";
+  const [year, month] = String(period).split("-");
+  if (!year || !month) return String(period);
+  return new Date(Number(year), Number(month) - 1, 1).toLocaleString("en-GB", { month: "short" });
+}
+
+function renderMauTrend(userMetrics, legacyTrend) {
+  const chartContainer = el("mau-trend-chart");
+  if (!chartContainer) return;
+
+  const rows = userMetrics?.mau_trend?.length
+    ? userMetrics.mau_trend.map((row) => ({
+        label: formatTrendPeriod(row.period),
+        value: row.label,
+        height: row.height || 40
+      }))
+    : legacyTrend?.bars || [];
+
+  if (!rows.length) {
+    chartContainer.innerHTML = `<div class="bar" style="--h: 35%"><span>Waiting</span></div>`;
+    return;
+  }
+
+  chartContainer.innerHTML = rows.map((bar) => `
+    <div class="bar" style="--h: ${bar.height}%">
+      <strong>${bar.value || ""}</strong>
+      <span>${bar.label}</span>
+    </div>
+  `).join("");
+}
+
+function renderUserMetrics(userMetrics, legacyStickiness, legacyTrend) {
+  const source = el("user-metrics-source");
+  if (source) {
+    const status = userMetrics?.status || "static_estimate";
+    const scope = userMetrics?.scope || "India national app panel";
+    const provider = userMetrics?.source || "static estimate";
+    const updated = userMetrics?.updated_at ? ` | updated: ${userMetrics.updated_at}` : "";
+    const note = userMetrics?.note ? ` | ${userMetrics.note}` : "";
+    source.textContent = `${scope} | ${status} | ${provider}${updated}${note}`;
+  }
+
+  const container = el("platform-stickiness");
+  if (container) {
+    const rows = userMetrics?.platforms?.length
+      ? userMetrics.platforms
+      : [
+          { name: "Blinkit", mau: "--", dau: "--", stickiness: legacyStickiness?.blinkit || "--" },
+          { name: "Instamart", mau: "--", dau: "--", stickiness: legacyStickiness?.instamart || "--" },
+          { name: "Zepto", mau: "--", dau: "--", stickiness: legacyStickiness?.zepto || "--" }
+        ];
+    container.innerHTML = rows.map((row) => `
+      <li>
+        <span>${row.name} | MAU ${row.mau || "--"} / DAU ${row.dau || "--"}</span>
+        <strong>${row.stickiness || "n/a"}</strong>
+      </li>
+    `).join("");
+  }
+
+  renderMauTrend(userMetrics, legacyTrend);
+}
+
 function renderData(data) {
   el("meta-data-updated").textContent =
     data.meta.data_updated_at || data.meta.last_refresh || "Unknown";
@@ -149,6 +212,7 @@ function renderData(data) {
 
   el("kpi-stickiness-value").textContent = data.kpis.dau_mau.value;
   el("kpi-stickiness-mom").textContent = data.kpis.dau_mau.mom;
+  renderUserMetrics(data.user_metrics, data.platform_stickiness, data.mau_trend);
 
   renderRiskSignals(data.risk_signals);
 
@@ -166,18 +230,6 @@ function renderData(data) {
 
   renderIndiaEvents(data.india_narrative_events);
   renderBenchmark(data.benchmark);
-
-  // 动态数据渲染
-  if (data.platform_stickiness) {
-    const container = el("platform-stickiness");
-    if (container) {
-      container.innerHTML = `
-        <li><span>Blinkit</span><strong>${data.platform_stickiness.blinkit || "--"}</strong></li>
-        <li><span>Instamart</span><strong>${data.platform_stickiness.instamart || "--"}</strong></li>
-        <li><span>Zepto</span><strong>${data.platform_stickiness.zepto || "--"}</strong></li>
-      `;
-    }
-  }
 
   if (data.review_volume_7d) {
     const container = el("review-volume");
@@ -312,17 +364,6 @@ function renderData(data) {
     }
   }
 
-  // MAU 趋势图
-  if (data.mau_trend && data.mau_trend.bars) {
-    const chartContainer = document.querySelector(".chart.bars");
-    if (chartContainer) {
-      chartContainer.innerHTML = data.mau_trend.bars.map(bar => `
-        <div class="bar" style="--h: ${bar.height}%">
-          <span>${bar.label}</span>
-        </div>
-      `).join("");
-    }
-  }
 }
 
 async function fetchAndRender() {
