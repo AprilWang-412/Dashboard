@@ -579,3 +579,217 @@ h4 {
     order: 1;
   }
 }
+
+/* Split vertical dashboard */
+.split-wrap {
+  width: min(1600px, calc(100% - 32px));
+}
+
+.split-dashboard {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 1px minmax(0, 1fr);
+  gap: 22px;
+  align-items: stretch;
+}
+
+.vertical-divider {
+  width: 1px;
+  min-height: calc(100vh - 140px);
+  background: linear-gradient(180deg, transparent, #94a3b8 12%, #94a3b8 88%, transparent);
+}
+
+.vertical-column {
+  min-width: 0;
+}
+
+.vertical-page {
+  min-width: 0;
+}
+
+.vertical-hero {
+  border-left: 4px solid var(--blue-6);
+}
+
+.vertical-page.food_delivery .vertical-hero {
+  border-left-color: var(--green);
+}
+
+.source-pill {
+  display: inline-block;
+  margin: 0;
+  padding: 6px 9px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+  background: #f8fafc;
+}
+
+.vertical-kpi-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.vertical-kpi {
+  min-height: 132px;
+}
+
+.vertical-kpi .big {
+  font-size: 28px;
+}
+
+.wide-kpi {
+  grid-column: 1 / -1;
+}
+
+.embedded-kpi {
+  margin-top: 0;
+  min-height: 120px;
+}
+
+.compact-metrics {
+  gap: 10px;
+}
+
+.risk-summary-row.compact {
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.risk-summary-row.compact .risk-badge {
+  padding: 10px 8px;
+  min-width: 90px;
+}
+
+.risk-summary-row.compact .risk-count {
+  font-size: 24px;
+}
+
+.platform-card-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.vertical-page.quick_commerce .platform-card-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.platform-card-grid .mini {
+  min-width: 0;
+}
+
+.platform-card-grid .topics {
+  font-size: 13px;
+}
+
+.mini-bars {
+  height: 150px;
+  margin-bottom: 28px;
+}
+
+.platform-engagement {
+  margin-top: 8px;
+}
+
+.platform-engagement small {
+  display: block;
+  max-width: 360px;
+  margin-top: 3px;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 400;
+  line-height: 1.35;
+}
+
+.sentiment-track {
+  display: flex;
+  width: 100%;
+  height: 12px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #e2e8f0;
+  margin: 12px 0 6px;
+}
+
+.sentiment-track span {
+  display: block;
+  min-width: 0;
+}
+
+.sentiment-pos {
+  background: #86efac;
+}
+
+.sentiment-neu {
+  background: #bfdbfe;
+}
+
+.sentiment-neg {
+  background: #fecaca;
+}
+
+.sentiment-labels {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 12px;
+  margin-bottom: 12px;
+}
+
+.feed-list em {
+  display: inline-block;
+  margin-left: 6px;
+  color: var(--muted);
+  font-style: normal;
+  font-size: 12px;
+}
+
+.inventory-mini {
+  margin-top: 10px;
+}
+
+.quick_commerce .daily {
+  background: var(--blue-1);
+  color: var(--blue-6);
+}
+
+.food_delivery .daily {
+  background: #ccfbf1;
+  color: #115e59;
+}
+
+@media (max-width: 1200px) {
+  .split-dashboard {
+    grid-template-columns: 1fr;
+  }
+
+  .vertical-divider {
+    display: none;
+  }
+
+  .vertical-page.quick_commerce .platform-card-grid,
+  .platform-card-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 700px) {
+  .split-wrap {
+    width: min(100% - 24px, 680px);
+  }
+
+  .vertical-kpi-grid,
+  .compact-metrics {
+    grid-template-columns: 1fr;
+  }
+
+  .wide-kpi {
+    grid-column: auto;
+  }
+
+  .sentiment-labels {
+    flex-direction: column;
+  }
+}

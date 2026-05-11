@@ -15,6 +15,7 @@
       "key": "blinkit",
       "name": "Blinkit",
       "company": "Eternal / Zomato",
+      "verticals": ["quick_commerce"],
       "store": "google",
       "app_id": "com.grofers.customerapp",
       "store_url": "https://play.google.com/store/apps/details?id=com.grofers.customerapp"
@@ -23,6 +24,8 @@
       "key": "swiggy",
       "name": "Swiggy",
       "company": "Swiggy / Instamart",
+      "verticals": ["quick_commerce", "food_delivery"],
+      "segment_note": "Swiggy Android app traffic is not segment-pure; use provider segment data where available.",
       "store": "google",
       "app_id": "in.swiggy.android",
       "store_url": "https://play.google.com/store/apps/details?id=in.swiggy.android"
@@ -31,9 +34,19 @@
       "key": "zepto",
       "name": "Zepto",
       "company": "Zepto",
+      "verticals": ["quick_commerce"],
       "store": "google",
       "app_id": "com.zeptoconsumerapp",
       "store_url": "https://play.google.com/store/apps/details?id=com.zeptoconsumerapp"
+    },
+    {
+      "key": "zomato",
+      "name": "Zomato",
+      "company": "Eternal / Zomato",
+      "verticals": ["food_delivery"],
+      "store": "google",
+      "app_id": "com.application.zomato",
+      "store_url": "https://play.google.com/store/apps/details?id=com.application.zomato"
     }
   ]
 }

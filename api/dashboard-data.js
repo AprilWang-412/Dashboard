@@ -7,9 +7,10 @@ const TIME_ZONE = "Asia/Hong_Kong";
 const FETCH_TIMEOUT_MS = 8000;
 
 const PLATFORM_ALIASES = {
-  blinkit: ["blinkit", "zomato", "eternal"],
+  blinkit: ["blinkit"],
   swiggy: ["swiggy", "instamart"],
-  zepto: ["zepto"]
+  zepto: ["zepto"],
+  zomato: ["zomato", "eternal"]
 };
 
 const STAKEHOLDER_KEYWORDS = {
@@ -116,6 +117,7 @@ function parseRss(xml, source) {
         sourceName,
         sourceId: source.id,
         sourceLabel: source.label,
+        sourceVertical: source.vertical || "mixed",
         publishedAt,
         date: publishedAt.toISOString().slice(0, 10),
         platform: classifyPlatform(text),
@@ -694,6 +696,286 @@ function calculateMAUTrendData(currentMAU, items) {
   };
 }
 
+const VERTICAL_DEFS = {
+  quick_commerce: {
+    title: "Quick Commerce",
+    subtitle: "Blinkit, Swiggy Instamart and Zepto | Grocery, FMCG and dark-store fulfilment",
+    platformKeys: ["blinkit", "instamart", "zepto"],
+    platforms: [
+      { key: "blinkit", name: "Blinkit" },
+      { key: "instamart", name: "Instamart" },
+      { key: "zepto", name: "Zepto" }
+    ],
+    sourceTerms: ["quick commerce", "blinkit", "instamart", "zepto", "dark store", "grocery", "sku", "fmcg", "10 minute", "10-minute"],
+    excludeTerms: ["restaurant table", "dining out"]
+  },
+  food_delivery: {
+    title: "Food Delivery",
+    subtitle: "Zomato and Swiggy | Restaurant marketplace and meal delivery",
+    platformKeys: ["zomato", "swiggy"],
+    platforms: [
+      { key: "zomato", name: "Zomato" },
+      { key: "swiggy", name: "Swiggy" }
+    ],
+    sourceTerms: ["food delivery", "zomato", "restaurant", "restaurants", "meal", "dining", "order food", "swiggy"],
+    excludeTerms: ["instamart", "quick commerce", "blinkit", "zepto", "dark store"]
+  }
+};
+
+function textForItem(item) {
+  return `${item.title || ""} ${item.summary || ""} ${item.sourceLabel || ""}`.toLowerCase();
+}
+
+function includesAny(text, terms) {
+  return terms.some((term) => text.includes(term));
+}
+
+function inferVertical(item) {
+  if (item.sourceVertical === "quick_commerce" || item.sourceVertical === "food_delivery") {
+    return item.sourceVertical;
+  }
+  const text = textForItem(item);
+  const quickScore = VERTICAL_DEFS.quick_commerce.sourceTerms.filter((term) => text.includes(term)).length;
+  const foodScore = VERTICAL_DEFS.food_delivery.sourceTerms.filter((term) => text.includes(term)).length;
+  if (quickScore > foodScore) return "quick_commerce";
+  if (foodScore > quickScore) return "food_delivery";
+  return "mixed";
+}
+
+function filterVerticalItems(items, verticalKey) {
+  const def = VERTICAL_DEFS[verticalKey];
+  return items.filter((item) => {
+    const text = textForItem(item);
+    const inferred = inferVertical(item);
+    if (inferred === verticalKey) return !includesAny(text, def.excludeTerms);
+    if (inferred !== "mixed") return false;
+    return includesAny(text, def.sourceTerms) && !includesAny(text, def.excludeTerms);
+  });
+}
+
+function platformKeyForVertical(item, verticalKey) {
+  const text = textForItem(item);
+  if (verticalKey === "quick_commerce") {
+    if (text.includes("blinkit")) return "blinkit";
+    if (text.includes("instamart") || text.includes("swiggy")) return "instamart";
+    if (text.includes("zepto")) return "zepto";
+    if (item.platform === "zomato" && item.sourceVertical === "quick_commerce") return "blinkit";
+  }
+  if (verticalKey === "food_delivery") {
+    if (text.includes("zomato") || text.includes("eternal")) return "zomato";
+    if (text.includes("swiggy") && !text.includes("instamart")) return "swiggy";
+  }
+  return null;
+}
+
+function buildPlatformMap(platformKeys, fallback) {
+  return Object.fromEntries(platformKeys.map((key) => [key, typeof fallback === "function" ? fallback(key) : fallback]));
+}
+
+function buildVerticalComplaintLists(items, stakeholder, verticalKey) {
+  const def = VERTICAL_DEFS[verticalKey];
+  const topicCounts = Object.fromEntries(def.platformKeys.map((key) => [key, new Map()]));
+  const titles = Object.fromEntries(def.platformKeys.map((key) => [key, []]));
+
+  items
+    .filter((item) => item.stakeholder === stakeholder)
+    .forEach((item) => {
+      const platform = platformKeyForVertical(item, verticalKey);
+      if (!platform || !topicCounts[platform]) return;
+      topicCounts[platform].set(item.topic, (topicCounts[platform].get(item.topic) || 0) + 1);
+      titles[platform].push(item.title);
+    });
+
+  const output = {};
+  def.platformKeys.forEach((key) => {
+    const rows = [...topicCounts[key].entries()]
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 3)
+      .map(([topic]) => topic);
+    if (titles[key][0]) rows.push(`Latest source signal: ${titles[key][0].slice(0, 110)}`);
+    output[key] = rows.length ? rows : ["No material public complaint cluster captured in current feed."];
+  });
+  return output;
+}
+
+function countRecentSignals(items, verticalKey, stakeholder) {
+  const def = VERTICAL_DEFS[verticalKey];
+  const sevenDaysAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
+  const counts = buildPlatformMap(def.platformKeys, 0);
+  items
+    .filter((item) => !stakeholder || item.stakeholder === stakeholder)
+    .forEach((item) => {
+      const time = new Date(item.date).getTime();
+      if (Number.isFinite(time) && time < sevenDaysAgo) return;
+      const platform = platformKeyForVertical(item, verticalKey);
+      if (platform && counts[platform] !== undefined) counts[platform] += 1;
+    });
+  return counts;
+}
+
+function buildSentimentMix(items) {
+  let positive = 0;
+  let neutral = 0;
+  let negative = 0;
+  const positiveWords = ["growth", "surge", "record", "beat", "strong", "profit", "expansion"];
+  const negativeWords = ["complaint", "delay", "strike", "fine", "violation", "loss", "protest"];
+
+  for (const item of items) {
+    const text = textForItem(item);
+    const hasPositive = positiveWords.some((word) => text.includes(word));
+    const hasNegative = negativeWords.some((word) => text.includes(word));
+    if (hasPositive && !hasNegative) positive += 1;
+    else if (hasNegative && !hasPositive) negative += 1;
+    else neutral += 1;
+  }
+
+  const total = positive + neutral + negative || 1;
+  return {
+    positive: Math.round((positive / total) * 100),
+    neutral: Math.round((neutral / total) * 100),
+    negative: Math.round((negative / total) * 100)
+  };
+}
+
+function calculatePlatformSentiment(items, verticalKey, stakeholder, baseline) {
+  const def = VERTICAL_DEFS[verticalKey];
+  const result = {};
+  const negativeKeywords = ["complaint", "delay", "strike", "commission", "payout", "unfair", "low pay", "refund"];
+  def.platformKeys.forEach((platform) => {
+    const platformItems = items.filter((item) => platformKeyForVertical(item, verticalKey) === platform && item.stakeholder === stakeholder);
+    const penalty = platformItems.reduce((score, item) => {
+      const text = textForItem(item);
+      return score + negativeKeywords.filter((keyword) => text.includes(keyword)).length;
+    }, 0);
+    result[platform] = Math.round(Math.min(90, Math.max(35, (baseline[platform] || 60) - penalty)));
+  });
+  return result;
+}
+
+function calculateDriverVolatility(items, verticalKey) {
+  const def = VERTICAL_DEFS[verticalKey];
+  const result = {};
+  def.platformKeys.forEach((platform) => {
+    const platformItems = items.filter((item) => platformKeyForVertical(item, verticalKey) === platform && item.stakeholder === "Driver");
+    const riskMentions = platformItems.filter((item) => includesAny(textForItem(item), ["strike", "protest", "incentive", "earning", "low pay"])).length;
+    result[platform] = riskMentions >= 4 ? "High" : riskMentions >= 2 ? "Medium-High" : "Medium";
+  });
+  return result;
+}
+
+function buildOrderMetrics(verticalKey, items) {
+  const snapshotPath = path.join(process.cwd(), "data", "order_metrics_snapshot.json");
+  if (fs.existsSync(snapshotPath)) {
+    const snapshot = JSON.parse(fs.readFileSync(snapshotPath, "utf8"));
+    if (snapshot.verticals && snapshot.verticals[verticalKey]) {
+      return {
+        ...snapshot.verticals[verticalKey],
+        status: snapshot.verticals[verticalKey].status || "provider_snapshot"
+      };
+    }
+  }
+
+  const feed = items
+    .filter((item) => includesAny(textForItem(item), ["aov", "average order", "order volume", "orders", "gov"]))
+    .slice(0, 5)
+    .map((item) => ({
+      date: item.date,
+      message: item.title,
+      source: item.sourceName,
+      url: item.url
+    }));
+
+  return {
+    status: "order_provider_unconfigured",
+    source: "Connect company disclosure, app-intelligence or internal scraped order feed",
+    aov: { value: "Provider required", delta: "No live AOV source connected" },
+    daily_orders: { value: "Provider required", delta: "No live daily order source connected" },
+    feed: feed.length ? feed : [
+      {
+        date: new Date().toISOString().slice(0, 10),
+        message: "No verified live AOV/order-count provider is connected yet; this card is intentionally not estimated.",
+        source: "Dashboard control"
+      }
+    ]
+  };
+}
+
+function buildVerticalKpis(data, verticalKey, orderMetrics) {
+  if (verticalKey === "quick_commerce") {
+    return {
+      mau: data.kpis?.mau || { value: "Provider required", mom: "n/a", yoy: "n/a" },
+      dau: data.kpis?.dau || { value: "Provider required", mom: "n/a", yoy: "n/a" },
+      dau_mau: data.kpis?.dau_mau || { value: "Provider required", mom: "n/a" },
+      aov: orderMetrics.aov,
+      daily_orders: orderMetrics.daily_orders
+    };
+  }
+  return {
+    mau: { value: "Provider required", mom: "Connect Zomato/Swiggy app panel", yoy: "Food delivery split needed" },
+    dau: { value: "Provider required", mom: "Connect Zomato/Swiggy app panel", yoy: "Food delivery split needed" },
+    dau_mau: { value: "Provider required", mom: "No live food-delivery user source connected" },
+    aov: orderMetrics.aov,
+    daily_orders: orderMetrics.daily_orders
+  };
+}
+
+function buildVerticalPayload(data, allItems, verticalKey) {
+  const def = VERTICAL_DEFS[verticalKey];
+  const items = filterVerticalItems(allItems, verticalKey);
+  const orderMetrics = buildOrderMetrics(verticalKey, items);
+  const merchantBaseline = verticalKey === "quick_commerce"
+    ? { blinkit: 61, instamart: 58, zepto: 55 }
+    : { zomato: 60, swiggy: 58 };
+  const driverBaseline = verticalKey === "quick_commerce"
+    ? { blinkit: 63, instamart: 60, zepto: 57 }
+    : { zomato: 61, swiggy: 60 };
+  const scores = calculateGrowthAndRiskScores(items);
+
+  return {
+    key: verticalKey,
+    title: def.title,
+    subtitle: def.subtitle,
+    platforms: def.platforms,
+    source_item_count: items.length,
+    kpis: buildVerticalKpis(data, verticalKey, orderMetrics),
+    order_metrics: orderMetrics,
+    user_metrics: verticalKey === "quick_commerce" ? data.user_metrics : {
+      status: "provider_unconfigured",
+      source: "similarweb_app_active_users",
+      scope: "India national Android app panel | food-delivery segment split",
+      note: "Connect Zomato and Swiggy app-panel or segment data to populate food-delivery MAU/DAU."
+    },
+    risk_signals: buildRiskSignals({ items: [] }, items),
+    consumer_complaints: buildVerticalComplaintLists(items, "Consumer", verticalKey),
+    merchant_complaints: buildVerticalComplaintLists(items, "Merchant", verticalKey),
+    driver_complaints: buildVerticalComplaintLists(items, "Driver", verticalKey),
+    india_narrative_events: buildEvents(items),
+    review_volume_7d: countRecentSignals(items, verticalKey, "Consumer"),
+    sentiment_mix: buildSentimentMix(items),
+    top_complaint_topics: extractTopComplaintTopics(items),
+    merchant_sentiment: calculatePlatformSentiment(items, verticalKey, "Merchant", merchantBaseline),
+    pain_points: calculateDynamicPainPoints(items),
+    driver_satisfaction: calculatePlatformSentiment(items, verticalKey, "Driver", driverBaseline),
+    driver_volatility: calculateDriverVolatility(items, verticalKey),
+    driver_risk_alerts: extractTopComplaintTopics(items.filter((item) => item.stakeholder === "Driver")).slice(0, 3),
+    growth_scores: scores.growth,
+    risk_scores: scores.risk,
+    pricing_index: buildPlatformMap(def.platformKeys, "Provider required"),
+    eta_data: extractETAData(items),
+    inventory_data: verticalKey === "quick_commerce"
+      ? extractInventoryData(items)
+      : { fill_rate: "n/a", oos_alerts: "n/a", promo_mismatches: "n/a" }
+  };
+}
+
+function applyVerticals(data, items) {
+  data.verticals = {
+    quick_commerce: buildVerticalPayload(data, items, "quick_commerce"),
+    food_delivery: buildVerticalPayload(data, items, "food_delivery")
+  };
+  return data;
+}
+
 function applyLiveItems(data, items, failures, sourceCount) {
   const now = new Date();
   const latestItem = items[0];
@@ -786,9 +1068,11 @@ function applyLiveItems(data, items, failures, sourceCount) {
 module.exports = async function handler(req, res) {
   const dataPath = path.join(process.cwd(), "data", "dashboard_data.json");
   let data = JSON.parse(fs.readFileSync(dataPath, "utf8"));
+  let liveItems = [];
 
   try {
     const { items, failures, sourceCount } = await fetchLiveItems();
+    liveItems = items;
     if (items.length) {
       applyLiveItems(data, items, failures, sourceCount);
     } else {
@@ -830,6 +1114,8 @@ module.exports = async function handler(req, res) {
       note: `User metric connector failed at runtime; static estimates retained. Error: ${userMetricErr.message}`
     };
   }
+
+  applyVerticals(data, liveItems);
 
   res.setHeader("Cache-Control", "no-store, max-age=0");
   res.setHeader("Content-Type", "application/json; charset=utf-8");
