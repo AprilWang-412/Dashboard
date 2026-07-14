@@ -4,7 +4,8 @@
   "description": "Automated dashboard for India quick commerce market intelligence",
   "main": "api/dashboard-data.js",
   "scripts": {
-    "dev": "vercel dev",
+    "dev": "node local_server.js",
+    "vercel-dev": "vercel dev",
     "deploy": "vercel --prod",
     "fetch-financials": "node scripts/scheduled-fetch.js",
     "update-metrics": "node scripts/update-metrics.js"
